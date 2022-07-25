@@ -69,9 +69,3 @@ away = Player(args.away, int(args.score))
 while True:
     home.turn()
     away.turn()
-
-
-
-
-
-
