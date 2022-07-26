@@ -84,6 +84,12 @@ away = Player(args.away, int(args.score))
 
 player_list = [home, away]
 
-for player in player_list:
-    if player.score != 0:
+while True:
+    for player in player_list:
         player.turn()
+        if player.score == 0:
+            print(player.name, "won!")
+            break
+    else:
+        continue
+    break
