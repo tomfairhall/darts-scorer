@@ -1,9 +1,4 @@
 # Darts Scorer v0.1.0
-#         if throw[0] == "t":
-#            score_round += 3*(int(throw.split("t")[1]))
-#        elif throw[0] == "d":
- #           score_round += 2*(int(throw.split("d")[1]))
-#
 # Valid inputs 0 - 20, d1 - d20, t1 - t20, sb, db
 
 import argparse
@@ -53,7 +48,7 @@ def check_score_turn(throws):
                         score_turn += int(score_throw)*3
         else:
             print("Please enter valid input!")
-            score_turn = 0
+            score_turn = 0   
     
     return score_turn
     
