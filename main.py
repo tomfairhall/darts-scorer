@@ -15,43 +15,37 @@ print("Welcome to darts scorer v0.1!")
 print(args.home, "v.", args.away)
 print("Starting points:", args.score)
 
-def check_number(number):
-    try:
-        int(number)
-        return True
-    except:
-        return False
-
 def check_busted(score_turn, score_remaining):
     return(score_remaining - score_turn < 0)
 
-def check_score_turn(throws):
-    score_turn = 0
+def check_number(number):
+    try:
+        return int(number)
+    except:
+        return False
 
-    for throw in throws:   
-        if len(throw) <= 2:
-            if check_number(throw):
-                score_throw = int(throw)
-                if score_throw <= 20:
-                    score_turn += score_throw
-        elif len(throw) == 3:
-            if throw == "sb":
-                score_turn += 25
-            elif throw == "db":
-                score_turn += 50
-            else:
-                score_throw = throw[1] + throw[2]
-                if check_number(score_throw):
-                    if throw[0] == "d":
-                        score_turn += int(score_throw)*2
-                    elif throw[1] == "t":
-                        score_turn += int(score_throw)*3
+def value_throw(throw):
+
+    if len(throw) <= 2 and check_number(throw) and int(throw) <= 20:
+        return int(throw)
+    elif len(throw) == 3:
+        if throw == "sb":
+            return 25
+        elif throw == "db":
+            return 50
         else:
-            print("Please enter valid input!")
-            score_turn = 0   
-    
-    return score_turn
-    
+            throw_modifier = throw[0]
+            throw_value = throw[1] + throw [2]
+            if check_number(throw_value) and int(throw_value) <= 20:
+                if throw_modifier == "d":
+                    return 2*int(throw_value)
+                elif throw_modifier == "t":
+                    return 3*int(throw_value)
+                else:
+                    raise ValueError("'" + throw + "'" + ": modifier wrong")
+            else:
+                raise ValueError("'" + throw + "'" + ": number wrong")
+    raise ValueError("'" + throw + "'" + ": value wrong")
 
 class Player():
     def __init__(self, name, score):
@@ -59,13 +53,23 @@ class Player():
         self.score = score
     
     def turn(self):
+        # player inputs throws
         throws = input("Enter " + self.name + "'s throws:").split()
 
+        # check if only three throws
         if len(throws) > 3 or len(throws) < 3:
             print("Enter only 3 throws!")
             self.turn()
         else:
-            score_turn = check_score_turn(throws)
+            # check each score
+            score_turn = 0
+            for throw in throws:
+                try:
+                    score_turn += value_throw(throw)
+                except ValueError as error:
+                    print(error)
+                    self.turn()
+
             if check_busted(score_turn, self.score):
                 print(self.name, "is busted!")
             else:
@@ -79,6 +83,7 @@ away = Player(args.away, int(args.score))
 
 player_list = [home, away]
 
+# game loop
 while True:
     for player in player_list:
         player.turn()
