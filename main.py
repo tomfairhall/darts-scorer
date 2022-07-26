@@ -20,31 +20,43 @@ print("Welcome to darts scorer v0.1!")
 print(args.home, "v.", args.away)
 print("Starting points:", args.score)
 
-def check_busted(score_hit, score_remaining):
-    if score_hit - score_remaining < 0:
-        print("Busted!")
+def check_number(number):
+    try:
+        int(number)
         return True
-    else:
+    except:
         return False
 
-# how to check if scores are right... regrex?
-def check_score(throws):
-    score_round = 0
+def check_busted(score_turn, score_remaining):
+    return(score_remaining - score_turn < 0)
 
-    for throw in throws:
-        if throw[0] == "t":
-            continue
-        elif throw[0] == "d":
-            continue
-        elif throw == "sb":
-            continue
-        elif throw == "db":
-            continue
-        elif int(throw) >= 0 or int(throw) <= 20:
-            continue
+def check_score_turn(throws):
+    score_turn = 0
+
+    for throw in throws:   
+        if len(throw) <= 2:
+            if check_number(throw):
+                score_throw = int(throw)
+                if score_throw <= 20:
+                    score_turn += score_throw
+        elif len(throw) == 3:
+            if throw == "sb":
+                score_turn += 25
+            elif throw == "db":
+                score_turn += 50
+            else:
+                score_throw = throw[1] + throw[2]
+                if check_number(score_throw):
+                    if throw[0] == "d":
+                        score_turn += int(score_throw)*2
+                    elif throw[1] == "t":
+                        score_turn += int(score_throw)*3
         else:
-            print("Please input valid scores!")
-            return False
+            print("Please enter valid input!")
+            score_turn = 0
+    
+    return score_turn
+    
 
 class Player():
     def __init__(self, name, score):
@@ -56,16 +68,22 @@ class Player():
 
         if len(throws) > 3 or len(throws) < 3:
             print("Enter only 3 throws!")
+            self.turn()
         else:
-            check_score()
-            check_busted()
+            score_turn = check_score_turn(throws)
+            if check_busted(score_turn, self.score):
+                print(self.name, "is busted!")
+            else:
+                self.score -= score_turn
 
-            
-        print(self.name + "'s", "score:", self.score)
+        print(self.name, "scored:", score_turn)
+        print(self.name, "has", self.score, "to go")
 
 home = Player(args.home, int(args.score))
 away = Player(args.away, int(args.score))
 
-while True:
-    home.turn()
-    away.turn()
+player_list = [home, away]
+
+for player in player_list:
+    if player.score != 0:
+        player.turn()
