@@ -1,4 +1,6 @@
 class Player():
+    #TODO: set staring score
+    
     def __init__(self, name, score):
         self.name = name
         self.score = score
@@ -36,6 +38,12 @@ class Player():
         else:
             raise ValueError("'" + throw + "'" + ": value wrong")
 
+    def __check_won(self):
+        return self.score == 0
+
+    def won(self):
+        return self.__check_won()
+
     def turn(self):
         # player inputs throws
         throws = input("Enter " + self.name + "'s throws:").split()
@@ -58,6 +66,9 @@ class Player():
                 print(self.name, "is busted!")
             else:
                 self.score -= score_turn
+                print(self.name, "scored:", score_turn)
 
-        print(self.name, "scored:", score_turn)
-        print(self.name, "has", self.score, "to go")
+                if self.__check_won():
+                    print(self.name, "won!")
+                else:
+                    print(self.name, "has", self.score, "to go")
