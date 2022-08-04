@@ -1,25 +1,22 @@
 # Darts Scorer v0.1.0
 
+import curses
+from curses import wrapper
 import argparse
 import player
 
 parser = argparse.ArgumentParser()
-
-parser.add_argument("home", help="Home team name")
-parser.add_argument("away", help="Away team name")
-parser.add_argument("score", help="Enter starting score")
-
+parser.add_argument("players", help="Enter player name(s)", action="store", nargs="+")
+parser.add_argument("score", help="Enter starting score", type=int)
 args = parser.parse_args()
 
-# game setup
 print("Welcome to darts scorer v0.1!")
-print(args.home, "v.", args.away)
 print("Starting points:", args.score)
 
-#TODO: Variable amount of players
-home = player.Player(args.home, int(args.score))
-away = player.Player(args.away, int(args.score))
-player_list = [home, away]
+player_list = []
+for player_name in args.players:
+    player_x = player.Player(player_name, args.score)
+    player_list.append(player_x)
 
 # game loop
 while True:

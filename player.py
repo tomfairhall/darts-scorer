@@ -1,3 +1,69 @@
+scores = {
+    "0" : 0,
+    "1" : 1,
+    "2" : 2,
+    "3" : 3,
+    "4" : 4,
+    "5" : 5,
+    "6" : 6,
+    "7" : 7,
+    "8" : 8,
+    "9" : 9,
+    "10" : 10,
+    "11" : 11,
+    "12" : 12,
+    "13" : 13,
+    "14" : 14,
+    "15" : 15,
+    "16" : 16,
+    "17" : 17,
+    "18" : 18,
+    "19" : 19,
+    "20" : 20,
+    "d1" : 2,
+    "d2" : 4,
+    "d3" : 6,
+    "d4" : 8,
+    "d5" : 10,
+    "d6" : 12,
+    "d7" : 14,
+    "d8" : 16,
+    "d9" : 18,
+    "d10" : 20,
+    "d11" : 22,
+    "d12" : 24,
+    "d13" : 26,
+    "d14" : 28,
+    "d15" : 30,
+    "d16" : 32,
+    "d17" : 34,
+    "d18" : 36,
+    "d19" : 38,
+    "d20" : 40,
+    "t1" : 3,
+    "t2" : 6,
+    "t3" : 9,
+    "t4" : 12,
+    "t5" : 15,
+    "t6" : 18,
+    "t7" : 21,
+    "t8" : 24,
+    "t9" : 27,
+    "t10" : 30,
+    "t11" : 33,
+    "t12" : 36,
+    "t13" : 39,
+    "t14" : 42,
+    "t15" : 45,
+    "t16" : 48,
+    "t17" : 51,
+    "t18" : 54,
+    "t19" : 57,
+    "t20" : 60,
+    "sb" : 25,
+    "db" : 50
+}
+
 class Player():
     #TODO: set staring score
     
@@ -5,70 +71,48 @@ class Player():
         self.name = name
         self.score = score
     
-    def __check_number(self, number):
-        try:
-            value = int(number)
-            return value >= 0 or value <= 20
-        except:
-            raise ValueError("'" + number + "'" ": value wrong")
-    
     def __check_busted(self, score_turn, score_remaining):
         return(score_remaining - score_turn < 0)
 
     def __check_won(self):
         return self.score == 0
 
-    def __value_throw(self, throw):
-        if len(throw) <= 2:
-            if throw == "sb":
-                return 25
-            elif throw == "db":
-                return 50 
-            elif self.__check_number(throw):
-                return int(throw)
-        elif len(throw) == 3:
-            throw_modifier = throw[0]
-            throw_value = throw[1] + throw [2]
-            if int(throw_value) <= 20:
-                if throw_modifier == "d":
-                    return 2*int(throw_value)
-                elif throw_modifier == "t":
-                    return 3*int(throw_value)
-                else:
-                    raise ValueError("'" + throw + "'" + ": modifier wrong")
-            else:
-                raise ValueError("'" + throw + "'" + ": number wrong")
-        else:
-            raise ValueError("'" + throw + "'" + ": value wrong")
+    def __check_throw(self, throw):
+        return throw in scores
 
     def won(self):
         return self.__check_won()
 
     def turn(self):
-        # player inputs throws
-        throws = input("Enter " + self.name + "'s throws:").split()
+        incorrect_input = True
+        throws = []
 
-        # check if only three throws
-        if len(throws) > 3 or len(throws) < 3:
-            print("Enter only 3 throws!")
-            self.turn()
-        else:
-            # check each score
-            score_turn = 0
-            for throw in throws:
-                try:
-                    score_turn += self.__value_throw(throw)
-                except ValueError as error:
-                    print(error)
-                    self.turn()
-
-            if self.__check_busted(score_turn, self.score):
-                print(self.name, "is busted!")
+        while incorrect_input:  
+            # player inputs throws
+            throws = input("Enter " + self.name + "'s throws:").split()
+            if len(throws) == 3:
+                incorrect_input = False
+                for throw in throws:
+                    if self.__check_throw(throw):
+                        continue
+                    else:
+                        print(throw + ": not a valid throw!")
+                        incorrect_input = True
             else:
-                self.score -= score_turn
-                print(self.name, "scored:", score_turn)
+                print("Enter 3 throws only!")
 
-                if self.__check_won():
-                    print(self.name, "won!")
-                else:
-                    print(self.name, "has", self.score, "to go")
+        # check each score
+        score_turn = 0
+        for throw in throws:
+            score_turn += scores[throw]
+
+        if self.__check_busted(score_turn, self.score):
+            print(self.name, "busted!")
+        else:
+            self.score -= score_turn
+            print(self.name, "scored:", score_turn)
+
+            if self.__check_won():
+                print(self.name, "won!")
+            else:
+                print(self.name, "has", self.score, "to go")
