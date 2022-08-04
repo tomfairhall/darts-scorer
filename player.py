@@ -15,6 +15,9 @@ class Player():
     def __check_busted(self, score_turn, score_remaining):
         return(score_remaining - score_turn < 0)
 
+    def __check_won(self):
+        return self.score == 0
+
     def __value_throw(self, throw):
         if len(throw) <= 2:
             if throw == "sb":
@@ -37,9 +40,6 @@ class Player():
                 raise ValueError("'" + throw + "'" + ": number wrong")
         else:
             raise ValueError("'" + throw + "'" + ": value wrong")
-
-    def __check_won(self):
-        return self.score == 0
 
     def won(self):
         return self.__check_won()
