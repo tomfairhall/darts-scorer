@@ -1,4 +1,6 @@
-scores = {
+import statistics
+
+valid_scores = {
     "0" : 0,
     "1" : 1,
     "2" : 2,
@@ -64,12 +66,11 @@ scores = {
     "db" : 50
 }
 
-class Player():
-    #TODO: set staring score
-    
+class Player():      
     def __init__(self, name, score):
         self.name = name
         self.score = score
+        self.score_list = []
     
     def __check_busted(self, score_turn, score_remaining):
         return(score_remaining - score_turn < 0)
@@ -77,42 +78,50 @@ class Player():
     def __check_won(self):
         return self.score == 0
 
-    def __check_throw(self, throw):
-        return throw in scores
+    def __check_score(self, score):
+        return score in valid_scores
+
+    def statistics(self):
+        print(self.name + "'s:", end=" ")
+        print("average score:", statistics.mean(self.score_list))
 
     def won(self):
         return self.__check_won()
 
     def turn(self):
-        incorrect_input = True
-        throws = []
+        incorrect_input = True # assume input is incorrect until proven correct
+        scores = []
 
         while incorrect_input:  
-            # player inputs throws
-            throws = input("Enter " + self.name + "'s throws:").split()
-            if len(throws) == 3:
+            # player inputs scores
+            print("Enter", self.name + "'s", "scores", "[" + str(self.score) + "]:", end=" ")
+            scores = input().split()
+            if len(scores) == 3:
                 incorrect_input = False
-                for throw in throws:
-                    if self.__check_throw(throw):
+                for score in scores:
+                    if self.__check_score(score):
                         continue
                     else:
-                        print(throw + ": not a valid throw!")
+                        print(score + ": not a valid score!")
                         incorrect_input = True
             else:
-                print("Enter 3 throws only!")
+                print("Enter 3 scores only!")
 
         # check each score
         score_turn = 0
-        for throw in throws:
-            score_turn += scores[throw]
+        for score in scores:
+            # save score
+            self.score_list.append(valid_scores[score])
+            # add score to turn score total
+            score_turn += valid_scores[score]
 
         if self.__check_busted(score_turn, self.score):
             print(self.name, "busted!")
         else:
             self.score -= score_turn
-            print(self.name, "scored:", score_turn)
+            print(self.name, "scored", score_turn, end=" ")
 
             if self.__check_won():
                 print(self.name, "won!")
             else:
-                print(self.name, "has", self.score, "to go")
+                print(self.name, "has", self.score, "remaining")
