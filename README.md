@@ -1,5 +1,5 @@
 # darts-scorer
-A CLI darts scorer
+A Python CLI darts scorer 
 
 Features:
 - Unlimited number of players
