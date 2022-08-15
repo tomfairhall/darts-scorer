@@ -1,5 +1,3 @@
-import statistics
-
 valid_scores = {
     "0" : 0,
     "1" : 1,
@@ -68,41 +66,30 @@ valid_scores = {
 
 class Player():      
     def __init__(self, name, score):
-        self.name = name
-        self.score = score
-        self.score_turn = []
-        self.score_list = []
-        self.finished = False
-    
-    def __check_busted(self):
-        return self.score - sum(self.score_turn) < 0
-
-    def __check_won(self):
-        return self.score - sum(self.score_turn) == 0
-
-    def __check_score(self, score):
-        return score in valid_scores
-
-    def statistics(self):
-        print(self.name + "'s:", end=" ")
-        print("average score:", statistics.mean(self.score_list))
+        self.name = name        #Player's name
+        self.score = score      #Player's current score
+        self.score_turn = []    #Player's current turn scores
+        self.turn_list = []    #Player's list of turn scores
+        self.scores_list = []   #Player's list of scores
 
     def busted(self):
-        busted = self.__check_busted()
+        busted = self.score - sum(self.score_turn) < 0
         if busted:
             self.score_turn.clear()
         return busted
 
     def won(self):
-        won = self.__check_won()
-        if won:
-            self.finished = True
-        return won
+        return self.score - sum(self.score_turn) == 0
+
+    def reset(self):
+        self.score -= sum(self.score_turn)
+        self.turn_list.append(sum(self.score_turn))
+        self.score_turn.clear()
 
     def throw(self):
-        score = input().lower()
-        
-        if self.__check_score(score):
+        score = input().lower()   
+        try:
             self.score_turn.append(valid_scores[score])
-        else:
-            print("'" + score + "'" + "is not valid!")
+            self.scores_list.append(valid_scores[score])
+        except:
+            raise ValueError(f"'{score}': is not valid!")
