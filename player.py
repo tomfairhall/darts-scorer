@@ -69,16 +69,16 @@ class Player():
         self.name = name        #Player's name
         self.score = score      #Player's current score
         self.score_turn = []    #Player's current turn scores
-        self.turn_list = []    #Player's list of turn scores
+        self.turn_list = []     #Player's list of turn scores
         self.scores_list = []   #Player's list of scores
 
-    def busted(self):
+    def bust(self):
         busted = self.score - sum(self.score_turn) < 0
         if busted:
             self.score_turn.clear()
         return busted
 
-    def won(self):
+    def win(self):
         return self.score - sum(self.score_turn) == 0
 
     def reset(self):

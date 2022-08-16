@@ -1,7 +1,6 @@
 # Darts Scorer v0.1.0
 import argparse
 import player
-from statistics import mean
 
 parser = argparse.ArgumentParser()
 parser.add_argument("players", help="Enter player name(s)", action="store", nargs="+")
@@ -36,11 +35,11 @@ while True:
                 except Exception as err:
                     print(err)
             
-            if person.won():
+            if person.win():
                 print(f"{person.name} won!")
                 break
 
-            if person.busted():
+            if person.bust():
                 person.reset()
                 print(f"{person.name} busted!")
                 break
@@ -48,7 +47,7 @@ while True:
         print(f"{person.name} scored: {sum(person.score_turn)}")
         person.reset()
 
-        if person.won():
+        if person.win():
             break
     else:
         continue
@@ -58,4 +57,4 @@ while True:
 for person in player_list:
     #print(vars(person)) #debug
     print(f"{person.name}'s highest turn: {max(person.turn_list)}")
-    print(f"{person.name}'s 3-dart average: {(args.score/len(person.scores_list))*3}")
+    print(f"{person.name}'s 3-dart average: {(args.score/len(person.scores_list)) * 3}")
